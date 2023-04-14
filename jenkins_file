@@ -1,0 +1,27 @@
+node 
+{
+def mavenHome = tool name : "maven3.9.1"
+stage ('git checkout stage')
+{
+git branch: 'dev', credentialsId: '2ce2a439-e3d6-4df0-b9c5-0b5d587337c9', url: 'https://github.com/sai-199/maven-web-application.git'
+}
+stage ('build')
+{
+sh "${mavenHome}/bin/mvn clean package"
+}
+stage ('execute sonarqube report')
+{
+sh "${mavenHome}/bin/mvn sonar:sonar"
+}
+stage ('upload ARTIFACTS')
+{
+sh "${mavenHome}/bin/mvn deploy"
+}
+stage ('deploy artifacts to tomcat')
+{
+sshagent(['c198a5a9-33b6-4ffd-a931-4b6b5d7b72c0']) 
+{
+ sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war centos@54.91.5.9:/opt/apache-tomcat-10.1.7/webapps/"
+}
+}
+}
