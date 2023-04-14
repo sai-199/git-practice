@@ -13,7 +13,7 @@ stage ('execute sonarqube report')
 {
 sh "${mavenHome}/bin/mvn sonar:sonar"
 }
-stage ('upload ARTIFACTS')
+stage ('upload ARTIFACTS to nexus')
 {
 sh "${mavenHome}/bin/mvn deploy"
 }
